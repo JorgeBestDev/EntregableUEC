@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='../static/images/Logo-uexternado.png') }}">
+    <link rel="stylesheet" href="{{url_for('static',filename='../static/dist/css/output.css')}}">
+    <script src="https://kit.fontawesome.com/175f4319ea.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="{{url_for('static', filename='../static/dist/js/numpad.js')}}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <title>Document</title>
+</head>
+
+<body class="fondo bg-cover bg-no-repeat">
+    <style>
+        .fondo {
+            background-image: url("{{ url_for('static', filename='images/externado1.jpg') }}");
+        }
+    </style>
+    <header class="flex row bg-white max-h-32 justify-between items-center">
+        <img src="{{url_for('static',filename='../static/images/logo-uec.png')}}" alt=""
+            class="object-contain w-1/6 aspect-3/2 mx-4">
+        <div>
+            <ul class="navlist">
+                <li>
+                    <a href="{{ url_for('index') }}"
+                        class="text-green-900 m-16 text-2xl font-semibold p-4 rounded-xl hover:text-green-800 hover:shadow-2xl"><i
+                            class="fa-solid fa-hand-point-left"></i> Volver</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="flex justify-center mt-20">
+        <form id="registerForm" class="bg-white max-w-lg p-10 rounded-3xl shadow-2xl" method="post">
+            <h2 class="text-4xl mb-4 text-center">Registro de Usuarios sala D</h2>
+            <p class="font-light text-lg text-center">Por favor registra los siguientes datos:</p>
+
+            <div class="mt-8 grid gap-8">
+                <div class="form__group">
+                    <input type="hidden" name="sala" value="">
+                    <input type="number" id="documento" class="form__input" placeholder=" " name="documento" required>
+                    <label style="font-size: 1.1rem;" for="documento" class="form__label">Documento</label>
+                    <span class="form__line"></span>
+                </div>
+                <div class="form__group">
+                    <input type="text" id="nombre" class="form__input" placeholder="Nombre Completo " name="nombre" required>
+                </div>
+                <div class="select" required>
+                    <select name="facultad" class="format border-2 border-black" required>
+                        <option selected disabled>Selecciona tu facultad</option>
+                        {% for facultades in facultad %}
+                        <option class="option" value="{{ facultades.idFacultad }}">
+                            {{ facultades.nombreFacultad }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="form__submit">Registrarme</button>
+                <a href="{{ url_for('usuario.login') }}" class="form__submit__return">Volver</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#registerForm').on('submit', function(e) {
+                e.preventDefault(); // Evita el envío normal del formulario
+
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url_for('usuario.register_usuario') }}",
+                    data: $(this).serialize(), // Serializa los datos del formulario
+                    success: function(response) {
+                        // Si el registro fue exitoso
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: response.message
+                        }).then(() => {
+                            window.location.href = "{{ url_for('equipo.equipo') }}"; // Redirige al usuario
+                        });
+                    },
+                    error: function(xhr) {
+                        const response = xhr.responseJSON; // Obtiene la respuesta JSON del error
+                        Swal.fire({
+                            icon: response.status === 'warning' ? 'warning' : 'error',
+                            title: response.status.charAt(0).toUpperCase() + response.status.slice(1),
+                            text: response.message
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+            window.addEventListener("load", function () {
+                numpad.attach({
+                    id: "documento",
+                    readonly: false
+                })
+            })
+        </script>
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script>
+            $("body").on("contextmenu", function (e) {
+                return false;
+            })
+        </script>
+</html>

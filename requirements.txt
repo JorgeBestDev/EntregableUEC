@@ -1,0 +1,12 @@
+#requirements.txt
+Flask
+Flask_login
+Flask-SQLAlchemy
+SQLAlchemy
+PyMySQL
+Werkzeug
+watchdog
+requests
+alembic
+psutil
+openpyxl
